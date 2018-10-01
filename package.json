@@ -1,0 +1,20 @@
+{
+  "name": "led-strip-web",
+  "version": "0.1.0",
+  "description": "Web interface for LED strip.",
+  "scripts": {
+    "build": "parcel build src/index.html",
+    "start": "parcel serve src/index.html"
+  },
+  "repository": "https://gitlab.com/prior99/led-strip-web",
+  "author": "Frederick Gnodtke <frederick@gnodtke.net>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/color": "^3.0.0",
+    "parcel-bundler": "^1.10.1",
+    "typescript": "^3.1.1"
+  },
+  "dependencies": {
+    "color": "^3.0.0"
+  }
+}
