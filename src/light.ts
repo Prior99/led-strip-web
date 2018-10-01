@@ -5,7 +5,29 @@ declare const WEBSOCKET_URL: string;
 const cursor = document.getElementById("cursor");
 const canvas = document.getElementById("root") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d");
-const socket = new WebSocket(WEBSOCKET_URL);
+let socket: WebSocket;
+
+function connect() {
+    console.log("Connecting to socket ...");
+    socket = new WebSocket(WEBSOCKET_URL);
+
+    socket.addEventListener("message", evt => {
+        const { r, g, b } = JSON.parse(evt.data);
+        const { x, y } = colorToCoordinates(r, g, b);
+        const { width, height } = cursor.getBoundingClientRect();
+        cursor.style.left = `${x - width / 2}px`;
+        cursor.style.top = `${y - height / 2}px`;
+    });
+
+    socket.addEventListener("error", evt => { 
+        console.error(evt);
+        setTimeout(connect, 1000);
+    });
+
+    socket.addEventListener("close", evt => { 
+        setTimeout(connect, 1000);
+    });
+}
 
 function getRadius() {
     return Math.min(canvas.width / 2, canvas.height / 2);
@@ -36,7 +58,6 @@ function coordinatesToColor(x: number, y: number) {
 function colorToCoordinates(r: number, g: number, b: number) {
     const { width, height } = canvas;
     const { h, l } = Color.rgb(r, g, b).hsl().object();
-    console.log(h, l);
     const arc = (h / 360) * Math.PI * 2;
     const radius = (1 - (l / 100)) * getRadius();
     const x = width / 2 + radius * Math.cos(arc);
@@ -69,15 +90,7 @@ canvas.addEventListener("mousedown", ({ x, y }) => {
     socket.send(JSON.stringify(coordinatesToColor(x, y)));
 });
 
-render();
-
 window.addEventListener("resize", render);
 
-socket.addEventListener("message", evt => {
-    const { r, g, b } = JSON.parse(evt.data);
-    const { x, y } = colorToCoordinates(r, g, b);
-    const { width, height } = cursor.getBoundingClientRect();
-    console.log(x, y);
-    cursor.style.left = `${x - width / 2}px`;
-    cursor.style.top = `${y - height / 2}px`;
-});
+render();
+connect();
