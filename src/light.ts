@@ -6,8 +6,11 @@ const cursor = document.getElementById("cursor");
 const canvas = document.getElementById("root") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d");
 let socket: WebSocket;
+let connecting = false;
 
 function connect() {
+    if (connecting) { return; }
+    connecting = true;
     console.log("Connecting to socket ...");
     socket = new WebSocket(WEBSOCKET_URL);
 
@@ -19,12 +22,18 @@ function connect() {
         cursor.style.top = `${y - height / 2}px`;
     });
 
+    socket.addEventListener("open", evt => {
+        connecting = false;
+    });
+
     socket.addEventListener("error", evt => { 
         console.error(evt);
+        connecting = false;
         setTimeout(connect, 1000);
     });
 
     socket.addEventListener("close", evt => { 
+        connecting = false;
         setTimeout(connect, 1000);
     });
 }
