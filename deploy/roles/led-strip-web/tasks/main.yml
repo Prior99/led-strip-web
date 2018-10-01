@@ -1,0 +1,9 @@
+---
+
+- name: copy files
+  become: true
+  synchronize:
+    src: "{{ item }}"
+    dest: /srv/http
+  with_items:
+    - ../dist/

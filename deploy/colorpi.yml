@@ -1,0 +1,5 @@
+- name: Setup web interface for LED strip
+  hosts: colorpi
+  remote_user: ansible
+  roles:
+    - led-strip-web

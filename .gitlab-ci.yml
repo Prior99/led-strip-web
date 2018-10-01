@@ -2,6 +2,7 @@ image: node:10-alpine
 
 stages:
   - build
+  - deploy
 
 build:
   stage: build
@@ -11,3 +12,22 @@ build:
   artifacts:
     paths:
       - dist/
+
+deploy:
+  image: "alpine:3.7"
+  before_script:
+    - apk --update add ansible git openssh python py2-pip rsync gnupg
+    - mkdir ~/.ssh
+    - echo "$SSH_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  script:
+    - export ANSIBLE_CONFIG=./ansible.cfg
+    - cd deploy
+    - ansible-playbook colorpi.yml
+  dependencies:
+    - build
+  stage: deploy
+  when: manual
+  only:
+    - master
