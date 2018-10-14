@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Web interface for LED strip.",
   "scripts": {
-    "build": "parcel build src/index.html",
+    "build": "parcel build --public-url ./ src/index.html",
     "start": "parcel serve src/index.html"
   },
   "repository": "https://gitlab.com/prior99/led-strip-web",

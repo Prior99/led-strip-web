@@ -1,9 +1,16 @@
 ---
 
+- name: create directory
+  become: true
+  file:
+    path: /srv/http/color
+    state: directory
+    mode: 0755
+
 - name: copy files
   become: true
   synchronize:
     src: "{{ item }}"
-    dest: /srv/http
+    dest: /srv/http/color
   with_items:
     - ../dist/
